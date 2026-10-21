@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Relógio de Cabeceira</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; width: 100%; height: 100%; overflow: hidden;
+    background: #000; color: #b8c0cc;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    -webkit-user-select: none; user-select: none;
+  }
+  body { display: -webkit-box; display: -webkit-flex; display: flex;
+    -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+    -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+    transition: color .3s ease;
+  }
+  .clock { width: 100%; padding: 4vh 5vw; text-align: center; }
+  .weekday { font-size: 4.2vw; letter-spacing: .18em; text-transform: uppercase;
+    color: #687382; margin-bottom: 2vh; }
+  .time { font-size: 20vw; font-weight: 200; line-height: 1.05; letter-spacing: -.045em;
+    font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .date { margin-top: 2.5vh; font-size: 3.6vw; letter-spacing: .12em;
+    color: #59616c; text-transform: uppercase; }
+  .hint { position: fixed; bottom: 2.5vh; left: 0; right: 0; text-align: center;
+    font-size: 2.4vw; color: #252a31; letter-spacing: .08em; }
+  body.dim .weekday { color: #3d4651; }
+  body.dim .time { color: #777f8a; }
+  body.dim .date { color: #343b44; }
+  body.dim .hint { color: #171a1f; }
+  @media (orientation: portrait) {
+    .time { font-size: 23vw; }
+    .weekday { font-size: 5vw; }
+    .date { font-size: 4vw; }
+    .hint { font-size: 3vw; }
+  }
+</style>
+</head>
+<body>
+  <main class="clock" id="clock">
+    <div class="weekday" id="weekday">SEGUNDA-FEIRA</div>
+    <div class="time" id="time">00:00</div>
+    <div class="date" id="date">01 DE JANEIRO DE 2026</div>
+  </main>
+  <div class="hint">TOQUE NA TELA PARA DIMINUIR OU AUMENTAR O BRILHO</div>
+<script>
+(function () {
+  var weekdays = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira',
+                  'quinta-feira', 'sexta-feira', 'sábado'];
+  var months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  var dim = true;
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+
+  function updateClock() {
+    var now = new Date();
+    document.getElementById('time').textContent =
+      pad(now.getHours()) + ':' + pad(now.getMinutes());
+    document.getElementById('weekday').textContent = weekdays[now.getDay()];
+    document.getElementById('date').textContent =
+      pad(now.getDate()) + ' de ' + months[now.getMonth()] + ' de ' + now.getFullYear();
+  }
+
+  document.addEventListener('touchstart', function () {
+    dim = !dim;
+    if (dim) {
+      document.body.className = 'dim';
+    } else {
+      document.body.className = '';
+    }
+  }, false);
+  document.addEventListener('click', function () {
+    dim = !dim;
+    document.body.className = dim ? 'dim' : '';
+  }, false);
+
+  document.body.className = 'dim';
+  updateClock();
+  window.setInterval(updateClock, 1000);
+}());
+</script>
+</body>
+</html>
