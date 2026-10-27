@@ -4,91 +4,84 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Relógio">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <title>Relógio de Cabeceira</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#000;color:#b8c0cc;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;-webkit-user-select:none;user-select:none}
-body{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
-.clock{width:100%;padding:3vh 5vw;text-align:center}.weekday{font-size:4.2vw;letter-spacing:.18em;text-transform:uppercase;color:#687382;margin-bottom:2vh}
-.time{font-size:20vw;font-weight:200;line-height:1.05;letter-spacing:-.045em;white-space:nowrap}.date{margin-top:2.5vh;font-size:3.3vw;letter-spacing:.1em;color:#59616c;text-transform:uppercase}
-.weather{margin-top:3vh;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;color:#818b98;font-size:4.3vw;font-weight:300}
-.weather-icon{font-size:7vw;margin-right:2vw;line-height:1}.weather-text{text-align:left}.weather-desc{display:block;font-size:2.5vw;color:#4e5865;margin-top:.4vh;letter-spacing:.04em}
-.hint{position:fixed;bottom:2vh;left:0;right:0;text-align:center;font-size:2vw;color:#171a1f;letter-spacing:.06em}
-body.dim .weekday{color:#3d4651}body.dim .time{color:#777f8a}body.dim .date{color:#343b44}body.dim .weather{color:#515a66}body.dim .weather-icon{opacity:.7}body.dim .weather-desc{color:#292f37}body.dim .hint{color:#111}
-@media(orientation:portrait){.time{font-size:23vw}.weekday{font-size:5vw}.date{font-size:4vw}.weather{font-size:5vw}.weather-icon{font-size:8vw}.weather-desc{font-size:3vw}.hint{font-size:2.7vw}}
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; width: 100%; height: 100%; overflow: hidden;
+    background: #000; color: #b8c0cc;
+    font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    -webkit-user-select: none; user-select: none;
+  }
+  body { display: -webkit-box; display: -webkit-flex; display: flex;
+    -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+    -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+    transition: color .3s ease;
+  }
+  .clock { width: 100%; padding: 4vh 5vw; text-align: center; }
+  .weekday { font-size: 4.2vw; letter-spacing: .18em; text-transform: uppercase;
+    color: #687382; margin-bottom: 2vh; }
+  .time { font-size: 20vw; font-weight: 200; line-height: 1.05; letter-spacing: -.045em;
+    font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .date { margin-top: 2.5vh; font-size: 3.6vw; letter-spacing: .12em;
+    color: #59616c; text-transform: uppercase; }
+  .hint { position: fixed; bottom: 2.5vh; left: 0; right: 0; text-align: center;
+    font-size: 2.4vw; color: #252a31; letter-spacing: .08em; }
+  body.dim .weekday { color: #3d4651; }
+  body.dim .time { color: #777f8a; }
+  body.dim .date { color: #343b44; }
+  body.dim .hint { color: #171a1f; }
+  @media (orientation: portrait) {
+    .time { font-size: 23vw; }
+    .weekday { font-size: 5vw; }
+    .date { font-size: 4vw; }
+    .hint { font-size: 3vw; }
+  }
 </style>
 </head>
-<body class="dim">
-<main class="clock">
-<div class="weekday" id="weekday">SEGUNDA-FEIRA</div>
-<div class="time" id="time">00:00</div>
-<div class="date" id="date">01 DE JANEIRO DE 2026</div>
-<div class="weather"><span class="weather-icon" id="weatherIcon">🌙</span><span class="weather-text"><span id="temperature">--°</span><span class="weather-desc" id="weatherDesc">Carregando clima...</span></span></div>
-</main>
-<div class="hint">TOQUE NA TELA PARA ALTERNAR O BRILHO</div>
+<body>
+  <main class="clock" id="clock">
+    <div class="weekday" id="weekday">SEGUNDA-FEIRA</div>
+    <div class="time" id="time">00:00</div>
+    <div class="date" id="date">01 DE JANEIRO DE 2026</div>
+  </main>
+  <div class="hint">TOQUE NA TELA PARA DIMINUIR OU AUMENTAR O BRILHO</div>
 <script>
-(function(){
-var weekdays=['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
-var months=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];var dim=true;
-function pad(n){return n<10?'0'+n:''+n}
-function updateClock(){var d=new Date();document.getElementById('time').textContent=pad(d.getHours())+':'+pad(d.getMinutes());document.getElementById('weekday').textContent=weekdays[d.getDay()];document.getElementById('date').textContent=pad(d.getDate())+' de '+months[d.getMonth()]+' de '+d.getFullYear()}
-function icon(c,day){if(c===0)return day?'☀️':'🌙';if(c===1||c===2)return day?'🌤️':'☁️';if(c===3)return '☁️';if(c===45||c===48)return '🌫️';if(c>=51&&c<=67)return '🌦️';if(c>=71&&c<=77)return '❄️';if(c>=80&&c<=82)return '🌧️';if(c>=85&&c<=86)return '🌨️';if(c>=95)return '⛈️';return '🌡️'}
-function desc(c){if(c===0)return 'Céu limpo';if(c===1)return 'Predominantemente limpo';if(c===2)return 'Parcialmente nublado';if(c===3)return 'Nublado';if(c===45||c===48)return 'Neblina';if(c>=51&&c<=57)return 'Garoa';if(c>=61&&c<=67)return 'Chuva';if(c>=71&&c<=77)return 'Neve';if(c>=80&&c<=82)return 'Pancadas de chuva';if(c>=85&&c<=86)return 'Pancadas de neve';if(c>=95)return 'Trovoadas';return 'Condição do tempo'}
+(function () {
+  var weekdays = ['domingo', 'segunda-feira', 'terça-feira', 'quarta-feira',
+                  'quinta-feira', 'sexta-feira', 'sábado'];
+  var months = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+                'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  var dim = true;
 
-function updateWeather() {
-  var xhr = new XMLHttpRequest();
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
 
-  var url = 'https://api.open-meteo.com/v1/forecast' +
-    '?latitude=-23.1791' +
-    '&longitude=-45.8872' +
-    '&current=temperature_2m%2Cweather_code%2Cis_day' +
-    '&timezone=America%2FSao_Paulo';
+  function updateClock() {
+    var now = new Date();
+    document.getElementById('time').textContent =
+      pad(now.getHours()) + ':' + pad(now.getMinutes());
+    document.getElementById('weekday').textContent = weekdays[now.getDay()];
+    document.getElementById('date').textContent =
+      pad(now.getDate()) + ' de ' + months[now.getMonth()] + ' de ' + now.getFullYear();
+  }
 
-  var label = document.getElementById('weatherDesc');
-  label.textContent = 'Consultando temperatura...';
-
-  xhr.open('GET', url, true);
-  xhr.timeout = 20000;
-
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState !== 4) return;
-
-    if (xhr.status === 200) {
-      try {
-        var data = JSON.parse(xhr.responseText);
-        var clima = data.current;
-
-        document.getElementById('temperature').textContent =
-          Math.round(clima.temperature_2m) + '°C';
-
-        document.getElementById('weatherIcon').textContent =
-          icon(clima.weather_code, clima.is_day === 1);
-
-        label.textContent =
-          desc(clima.weather_code) + ' · São José dos Campos';
-
-      } catch (e) {
-        label.textContent = 'Erro ao interpretar os dados';
-      }
+  document.addEventListener('touchstart', function () {
+    dim = !dim;
+    if (dim) {
+      document.body.className = 'dim';
     } else {
-      label.textContent = 'Erro HTTP: ' + xhr.status;
+      document.body.className = '';
     }
-  };
+  }, false);
+  document.addEventListener('click', function () {
+    dim = !dim;
+    document.body.className = dim ? 'dim' : '';
+  }, false);
 
-  xhr.onerror = function () {
-    label.textContent = 'Falha de rede ou bloqueio CORS';
-  };
-
-  xhr.ontimeout = function () {
-    label.textContent = 'Tempo esgotado ao consultar o clima';
-  };
-
-  xhr.send(null);
-}
-
-document.addEventListener('click',function(){dim=!dim;document.body.className=dim?'dim':''},false);
-updateClock();updateWeather();window.setInterval(updateClock,1000);window.setInterval(updateWeather,1800000)
+  document.body.className = 'dim';
+  updateClock();
+  window.setInterval(updateClock, 1000);
 }());
 </script>
 </body>
